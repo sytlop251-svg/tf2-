@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TF2 Вики — Баги, советы и кликер</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ----- RESET & BASE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #0b0a08;
+            color: #d6d0c4;
+            font-family: 'Roboto Condensed', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        a {
+            color: #e8b86d;
+            text-decoration: none;
+            border-bottom: 1px dotted #6a4f2a;
+        }
+        a:hover { color: #f5d69e; border-bottom-color: #b87a2e; }
+
+        /* ----- MAIN WRAPPER ----- */
+        .wiki-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            background: #161310;
+            background-image: radial-gradient(ellipse at 20% 80%, #1f1b16 0%, #0f0d0a 100%);
+            border: 2px solid #3a3128;
+            border-radius: 20px 20px 12px 12px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 60px rgba(60, 40, 20, 0.15);
+            padding: 20px 25px 30px;
+            position: relative;
+        }
+
+        .wiki-wrapper::before {
+            content: "☰";
+            position: absolute;
+            top: 8px;
+            right: 20px;
+            font-size: 2rem;
+            color: #3a3128;
+            opacity: 0.3;
+            font-weight: 300;
+            transform: rotate(5deg);
+        }
+
+        /* ----- TOP BAR ----- */
+        .wiki-topbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #2f281f;
+            padding-bottom: 10px;
+            margin-bottom: 22px;
+        }
+
+        .wiki-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .wiki-logo .icon {
+            font-size: 2.2rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 6px #b87a2e55);
+        }
+        .wiki-logo h1 {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            color: #f0d6a8;
+            text-shadow: 0 2px 0 #3f2e18, 0 0 12px #b87a2e33;
+            text-transform: uppercase;
+        }
+        .wiki-logo h1 small {
+            font-weight: 300;
+            font-size: 1rem;
+            color: #9a896f;
+            letter-spacing: 2px;
+            display: inline-block;
+            margin-left: 10px;
+            text-shadow: none;
+        }
+
+        .mode-switcher {
+            display: flex;
+            gap: 8px;
+            background: #1f1a15;
+            padding: 6px;
+            border-radius: 40px;
+            border: 1px solid #3a3128;
+        }
+        .mode-btn {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: none;
+            background: transparent;
+            color: #7a6a55;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .mode-btn:hover {
+            color: #f0d6a8;
+        }
+        .mode-btn.active {
+            background: #b87a2e;
+            color: #1c1814;
+            box-shadow: 0 2px 12px rgba(184, 122, 46, 0.3);
+        }
+        .mode-btn.active:hover {
+            background: #e8b86d;
+        }
+
+        .wiki-actions {
+            display: flex;
+            gap: 12px;
+            font-size: 0.95rem;
+            background: #1f1a15;
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1px solid #3a3128;
+        }
+        .wiki-actions span { color: #7a6a55; }
+        .wiki-actions a { border-bottom: none; }
+
+        /* ----- LAYOUT ----- */
+        .wiki-grid {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* --- SIDEBAR --- */
+        .wiki-sidebar {
+            flex: 0 0 220px;
+            background: #1c1814;
+            border-radius: 16px;
+            border: 1px solid #2f281f;
+            padding: 16px 0 12px 0;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .wiki-sidebar .nav-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b4916a;
+            padding: 0 18px 10px 18px;
+            border-bottom: 1px solid #2f281f;
+            margin-bottom: 8px;
+        }
+
+        .wiki-sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .wiki-sidebar ul li {
+            border-bottom: 1px solid #1f1b17;
+        }
+        .wiki-sidebar ul li a {
+            display: block;
+            padding: 8px 18px;
+            color: #c7bbaa;
+            border-bottom: none;
+            font-weight: 400;
+            transition: 0.1s ease;
+            border-left: 3px solid transparent;
+        }
+        .wiki-sidebar ul li a:hover {
+            background: #2a241e;
+            color: #f0d6a8;
+            border-left-color: #b87a2e;
+        }
+        .wiki-sidebar ul li a.active {
+            background: #2a241e;
+            border-left-color: #e8b86d;
+            color: #f5d69e;
+            font-weight: 700;
+        }
+
+        .wiki-sidebar .nav-foot {
+            margin-top: 12px;
+            padding: 12px 18px 0;
+            border-top: 1px solid #2f281f;
+            font-size: 0.85rem;
+            color: #5f5342;
+        }
+        .wiki-sidebar .nav-foot img {
+            display: block;
+            margin: 10px auto 0;
+            max-width: 85%;
+            border-radius: 8px;
+            opacity: 0.85;
+            border: 1px solid #2f281f;
+        }
+
+        /* --- CONTENT --- */
+        .wiki-content {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .mode-content {
+            display: none;
+        }
+        .mode-content.active {
+            display: block;
+        }
+
+        /* --- ОБНОВЛЁННАЯ ВЁРСТКА КЛИКЕРА: слева — игра, справа — биржа --- */
+        .clicker-layout {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        /* ЛЕВАЯ ЧАСТЬ: основной кликер */
+        .clicker-main {
+            flex: 2;
+            min-width: 300px;
+            background: #1c1814;
+            border: 2px solid #3a3128;
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+
+        /* ПРАВАЯ ЧАСТЬ: биржа рельсов */
+        .clicker-exchange {
+            flex: 1.2;
+            min-width: 280px;
+            background: #1c1814;
+            border: 2px solid #3a3128;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* --- СТИЛИ ДЛЯ ИГРОВОЙ ЧАСТИ --- */
+        .clicker-main #train {
+            font-size: 120px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            user-select: none;
+            display: inline-block;
+            line-height: 1;
+        }
+        .clicker-main #train:hover {
+            transform: scale(1.15);
+        }
+        .clicker-main #train:active {
+            transform: scale(0.9);
+        }
+        .clicker-main #counter {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f0d6a8;
+            margin: 16px 0;
+            font-family: 'Oswald', sans-serif;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin: 4px 0 12px;
+            font-size: 0.9rem;
+            color: #9a896f;
+        }
+        .stats-row span {
+            color: #f0d6a8;
+            font-weight: 700;
+        }
+        .sound-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 8px 0 16px;
+        }
+        #sound-toggle {
+            padding: 6px 18px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: #2f281f;
+            color: #9a896f;
+            border: 2px solid #3a3128;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        #sound-toggle:hover {
+            border-color: #b87a2e;
+            color: #f0d6a8;
+        }
+        #sound-toggle.on {
+            background: #b87a2e;
+            color: #1c1814;
+            border-color: #b87a2e;
+        }
+        #sound-toggle.on:hover {
+            background: #e8b86d;
+        }
+        #sound-status {
+            font-size: 0.9rem;
+            color: #7a6a55;
+        }
+        #sound-status.on {
+            color: #8fca8f;
+        }
+        #sound-status.off {
+            color: #ca8f8f;
+        }
+
+        .upgrade-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .clicker-main #upgrade {
+            padding: 12px 28px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: #b87a2e;
+            color: #1c1814;
+            border: none;
+            border-radius: 40px;
+            border-bottom: 3px solid #6a4f2a;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 700;
+        }
+        .clicker-main #upgrade:hover {
+            background: #e8b86d;
+            transform: translateY(-2px);
+        }
+        .clicker-main #upgrade:active {
+            transform: translateY(0px);
+            border-bottom-width: 2px;
+        }
+
+        /* --- МАГАЗИН ПАРОВОЗИКОВ (в левой части) --- */
+        .shop-container {
+            border-top: 2px solid #2f281f;
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+        .shop-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.1rem;
+            color: #b4916a;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+        .shop-item {
+            background: #23201b;
+            border: 2px solid #2f281f;
+            border-radius: 12px;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            position: relative;
+        }
+        .shop-item:hover:not(.owned) {
+            border-color: #b87a2e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(184, 122, 46, 0.2);
+        }
+        .shop-item.owned {
+            border-color: #4a8a5a;
+            opacity: 0.85;
+            cursor: default;
+        }
+        .shop-item.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .shop-item .train-emoji {
+            font-size: 2.5rem;
+            display: block;
+            line-height: 1.2;
+        }
+        .shop-item .train-name {
+            font-size: 0.7rem;
+            color: #9a896f;
+            margin-top: 4px;
+        }
+        .shop-item .train-bonus {
+            font-size: 0.6rem;
+            color: #8fca8f;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+        .shop-item .train-price {
+            font-size: 0.65rem;
+            color: #f0d6a8;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+        .shop-item .train-status {
+            font-size: 0.6rem;
+            color: #4a8a5a;
+            margin-top: 2px;
+        }
+        .shop-item.owned .train-status {
+            color: #4a8a5a;
+        }
+        .shop-item.locked .train-status {
+            color: #ca8f8f;
+        }
+        .shop-item .buy-btn {
+            margin-top: 4px;
+            padding: 2px 12px;
+            font-size: 0.6rem;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            background: #b87a2e;
+            color: #1c1814;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 700;
+        }
+        .shop-item .buy-btn:hover:not(:disabled) {
+            background: #e8b86d;
+        }
+        .shop-item .buy-btn:disabled {
+            background: #3a3128;
+            color: #5f5342;
+            cursor: not-allowed;
+        }
+        .shop-item.owned .buy-btn {
+            background: #2a4a3a;
+            color: #8fca8f;
+            cursor: default;
+        }
+        .shop-item .bonus-tag {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #b87a2e;
+            color: #1c1814;
+            font-size: 0.5rem;
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clicker-stats {
+            margin-top: 16px;
+            color: #7a6a55;
+            font-size: 0.95rem;
+        }
+        .clicker-stats span {
+            color: #f0d6a8;
+            font-weight: 700;
+        }
+
+        /* --- СТИЛИ ДЛЯ БИРЖИ РЕЛЬСОВ --- */
+        .exchange-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            color: #f0d6a8;
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .exchange-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #7a6a55;
+            margin-bottom: 16px;
+        }
+        .exchange-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #8fca8f;
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+            margin: 8px 0;
+        }
+        .exchange-price.down {
+            color: #ca8f8f;
+        }
+        .exchange-stats {
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.8rem;
+            color: #9a896f;
+            margin-bottom: 16px;
+        }
+        .exchange-stats span {
+            color: #f0d6a8;
+            font-weight: 700;
+        }
+
+        /* График цены (canvas) */
+        #priceChart {
+            width: 100%;
+            height: 100px;
+            background: #0f0d0a;
+            border: 1px solid #2f281f;
+            border-radius: 10px;
+            display: block;
+            margin: 8px 0 16px;
+        }
+
+        .exchange-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .exchange-actions button {
+            flex: 1;
+            padding: 10px 12px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 700;
+            min-width: 80px;
+        }
+        .exchange-actions .buy-rail {
+            background: #2a4a3a;
+            color: #8fca8f;
+            border-bottom: 3px solid #1a3a2a;
+        }
+        .exchange-actions .buy-rail:hover {
+            background: #3a5a4a;
+            transform: translateY(-2px);
+        }
+        .exchange-actions .sell-rail {
+            background: #4a2a2a;
+            color: #ca8f8f;
+            border-bottom: 3px solid #3a1a1a;
+        }
+        .exchange-actions .sell-rail:hover {
+            background: #5a3a3a;
+            transform: translateY(-2px);
+        }
+        .exchange-actions .buy-rail:disabled,
+        .exchange-actions .sell-rail:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .exchange-inventory {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #2f281f;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #9a896f;
+        }
+        .exchange-inventory span {
+            color: #f0d6a8;
+            font-weight: 700;
+        }
+        .exchange-change {
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+        .exchange-change.up { color: #8fca8f; }
+        .exchange-change.down { color: #ca8f8f; }
+
+        /* --- ОСТАЛЬНЫЕ СТИЛИ (баги, советы) --- */
+        .infobox {
+            float: right;
+            width: 280px;
+            background: #1f1a15;
+            border: 2px solid #3a3128;
+            border-radius: 18px 18px 12px 12px;
+            margin: 0 0 18px 24px;
+            padding: 0 0 12px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+            overflow: hidden;
+        }
+        .infobox-header {
+            background: #2f281f;
+            padding: 8px 16px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #f0d6a8;
+            border-bottom: 2px solid #b87a2e;
+            letter-spacing: 1px;
+        }
+        .infobox-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-bottom: 1px solid #2f281f;
+        }
+        .infobox-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 16px;
+            border-bottom: 1px solid #2a241e;
+            font-size: 0.95rem;
+        }
+        .infobox-row .label { color: #9a896f; font-weight: 300; }
+        .infobox-row .value { color: #ece3d4; font-weight: 400; }
+        .infobox-row:last-child { border-bottom: none; }
+        .infobox .badge-box {
+            padding: 8px 16px;
+            text-align: center;
+            background: #13100d;
+        }
+
+        .page-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #f0d6a8;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            line-height: 1.1;
+            text-shadow: 0 2px 0 #2f1f0e;
+        }
+        .page-sub {
+            color: #9a896f;
+            border-bottom: 1px solid #2f281f;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .anchor { scroll-margin-top: 80px; }
+        .wiki-content h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8rem;
+            color: #e8c894;
+            margin: 28px 0 10px 0;
+            border-bottom: 2px solid #2f281f;
+            padding-bottom: 4px;
+        }
+        .wiki-content h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            color: #d4bc94;
+            margin: 22px 0 8px 0;
+        }
+        .wiki-content p { margin-bottom: 14px; }
+
+        .content-img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 12px 0 18px;
+            border: 1px solid #2f281f;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .content-img.center {
+            display: block;
+            margin: 12px auto 18px;
+            max-width: 500px;
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #7a6a55;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 18px;
+        }
+
+        /* --- ТАБЛИЦА --- */
+        .wiki-table {
+            width: 100%;
+            max-width: 750px;
+            margin: 12px auto 20px;
+            border-collapse: collapse;
+            background: #1c1814;
+            border: 1px solid #2f281f;
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+        .wiki-table th {
+            background: #2f281f;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+            color: #f0d6a8;
+            border-bottom: 2px solid #b87a2e;
+            text-align: left;
+            font-size: 0.8rem;
+        }
+        .wiki-table td {
+            padding: 7px 12px;
+            border-bottom: 1px solid #23201b;
+            font-size: 0.85rem;
+        }
+        .wiki-table tr:last-child td { border-bottom: none; }
+        .wiki-table tr:hover td { background: #23201b; }
+        .wiki-table td:first-child { font-weight: 700; color: #e8c894; white-space: nowrap; }
+        .wiki-table td:nth-child(3) { text-align: center; }
+
+        .badge-wiki {
+            display: inline-block;
+            padding: 1px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .badge-wiki.crash { background: #5a2a2a; color: #fcc; border: 1px solid #9a4a4a; }
+        .badge-wiki.rce { background: #5a2a4a; color: #fcd0f0; border: 1px solid #aa5a8a; }
+        .badge-wiki.econ { background: #2a4a3a; color: #c0f0c0; border: 1px solid #4a8a5a; }
+        .badge-wiki.abuse { background: #5a4a2a; color: #fceac0; border: 1px solid #aa8a4a; }
+        .badge-wiki.legacy { background: #2a2a3a; color: #c0c0f0; border: 1px solid #5a5a8a; }
+
+        .bug-entry {
+            background: #1c1814;
+            border-left: 6px solid #6a4f2a;
+            padding: 14px 20px;
+            margin: 16px 0 20px;
+            border-radius: 0 16px 16px 0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .bug-entry strong { color: #f0d6a8; }
+        .bug-entry .bug-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 28px;
+            font-size: 0.9rem;
+            color: #9a896f;
+            margin: 4px 0 8px;
+        }
+        .bug-entry .bug-img {
+            float: right;
+            max-width: 140px;
+            border-radius: 10px;
+            margin: 0 0 8px 14px;
+            border: 1px solid #2f281f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 20px 0 30px;
+        }
+        .class-card {
+            background: #1c1814;
+            border: 1px solid #2f281f;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .class-card:hover {
+            border-color: #b87a2e;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(184, 122, 46, 0.2);
+        }
+        .class-card .class-header {
+            background: #2f281f;
+            padding: 10px 16px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            color: #f0d6a8;
+            border-bottom: 2px solid #b87a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .class-card .class-header .emoji { font-size: 1.6rem; }
+        .class-card .class-desc {
+            padding: 12px 16px;
+            color: #c7bbaa;
+            font-size: 0.95rem;
+        }
+        .class-card .class-desc strong { color: #f0d6a8; }
+
+        .guide-button-container {
+            text-align: center;
+            margin: 30px 0 20px;
+            padding: 20px 0 10px;
+            border-top: 2px solid #2f281f;
+        }
+        .guide-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: #b87a2e;
+            color: #1c1814 !important;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 60px;
+            border-bottom: 4px solid #6a4f2a;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 24px rgba(184, 122, 46, 0.3);
+            text-decoration: none !important;
+            border-left: none;
+            cursor: pointer;
+        }
+        .guide-button:hover {
+            background: #e8b86d;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 32px rgba(184, 122, 46, 0.5);
+            border-bottom-color: #b87a2e;
+            color: #1c1814 !important;
+        }
+        .guide-button:active {
+            transform: translateY(0px);
+            border-bottom-width: 2px;
+        }
+        .guide-button,
+        .guide-button:hover,
+        .guide-button:visited,
+        .guide-button:active { color: #1c1814 !important; }
+
+        .edit-link {
+            font-size: 0.85rem;
+            color: #6a5a4a;
+            border-bottom: 1px dashed #4a3f2f;
+        }
+
+        .wiki-footer {
+            margin-top: 40px;
+            padding-top: 18px;
+            border-top: 2px solid #2f281f;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #5f5342;
+        }
+        .wiki-footer a { color: #9a896f; border-bottom: 1px dotted #3a3128; }
+
+        @media (max-width: 900px) {
+            .clicker-layout { flex-direction: column; }
+            .clicker-exchange { position: static; }
+            .wiki-sidebar { flex: 1 1 100%; position: static; }
+            .infobox { float: none; width: 100%; margin: 20px 0; }
+            .wiki-logo h1 { font-size: 1.6rem; }
+            .wiki-logo h1 small { display: block; margin-left: 0; }
+            .bug-entry .bug-img { float: none; max-width: 100%; margin: 8px 0; }
+            .wiki-topbar { flex-direction: column; align-items: stretch; gap: 12px; }
+            .mode-switcher { justify-content: center; flex-wrap: wrap; }
+            .mode-btn { font-size: 0.75rem; padding: 4px 12px; }
+            .guide-button { font-size: 1.1rem; padding: 14px 24px; }
+            .class-grid { grid-template-columns: 1fr; }
+            .clicker-main #train { font-size: 80px; }
+            .wiki-table { font-size: 0.75rem; max-width: 100%; }
+            .wiki-table th { font-size: 0.7rem; padding: 5px 8px; }
+            .wiki-table td { font-size: 0.75rem; padding: 5px 8px; }
+            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .wiki-wrapper { padding: 12px; }
+            .page-title { font-size: 2rem; }
+            .clicker-main { padding: 16px; }
+            .clicker-main #train { font-size: 60px; }
+            .wiki-table { font-size: 0.65rem; }
+            .wiki-table th { font-size: 0.6rem; padding: 4px 6px; }
+            .wiki-table td { font-size: 0.65rem; padding: 4px 6px; }
+            .badge-wiki { font-size: 0.5rem; padding: 1px 6px; }
+            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+            .shop-item .train-emoji { font-size: 2rem; }
+            .stats-row { gap: 12px; font-size: 0.8rem; }
+            .exchange-price { font-size: 1.5rem; }
+            .exchange-actions button { font-size: 0.75rem; padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wiki-wrapper">
+
+    <!-- TOP BAR -->
+    <div class="wiki-topbar">
+        <div class="wiki-logo">
+            <span class="icon">🔧</span>
+            <h1>TF2 <small>вики</small></h1>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="bugs">🐛 Баги</button>
+                <button class="mode-btn" data-mode="tips">🎯 Советы</button>
+                <button class="mode-btn" data-mode="clicker">🚂 Кликер</button>
+            </div>
+            <div class="wiki-actions">
+                <span>📄</span> <a href="#">обсуждение</a>
+                <span>✎</span> <a href="#">править</a>
+                <span>🔍</span> <a href="#">поиск</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="wiki-grid">
+
+        <!-- SIDEBAR -->
+        <aside class="wiki-sidebar">
+            <div class="nav-title">📂 Навигация</div>
+            <ul>
+                <li><a href="#section-buffer-overflow">🧨 Buffer Overflow</a></li>
+                <li><a href="#section-rce">☠️ RCE 2015</a></li>
+                <li><a href="#section-crash">💀 Crash-баг 2017</a></li>
+                <li><a href="#section-duplication">💰 Дупликация</a></li>
+                <li><a href="#section-bots">🤖 Боты-кикеры</a></li>
+                <li><a href="#section-wallhack">🏚️ 2Fort Wallhack</a></li>
+                <li><a href="#section-tips">🎯 Советы по классам</a></li>
+                <li><a href="#section-clicker">🚂 Кликер</a></li>
+            </ul>
+
+            <div class="nav-foot">
+                <span>версия: 2.0 (2025)</span><br>
+                <span style="color:#3a3128;">⚙️ data from community</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Team_Fortress_2_style_logo.svg/1280px-Team_Fortress_2_style_logo.svg.png" alt="TF2 logo">
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="wiki-content">
+
+            <!-- ===== РЕЖИМ 1: БАГИ ===== -->
+            <div class="mode-content active" id="mode-bugs">
+
+                <h1 class="page-title">Крупнейшие баги TF2</h1>
+                <div class="page-sub">
+                    <span>история критических уязвимостей · от Buffer Overflow до RCE</span>
+                    <span class="edit-link">✎ править раздел</span>
+                </div>
+
+                <h2>📊 Сводная таблица</h2>
+                <table class="wiki-table">
+                    <thead><tr><th>Год</th><th>Название</th><th>Тип</th><th>Ущерб</th></tr></thead>
+                    <tbody>
+                        <tr><td>2010</td><td>Переполнение имени</td><td><span class="badge-wiki crash">краш</span></td><td>вылет серверов</td></tr>
+                        <tr><td>2015</td><td>RCE в Workshop</td><td><span class="badge-wiki rce">RCE</span></td><td>кража аккаунтов</td></tr>
+                        <tr><td>2017</td><td>Particle Overflow</td><td><span class="badge-wiki crash">краш</span></td><td>падение регионов</td></tr>
+                        <tr><td>2019</td><td>Торговый дупликатор</td><td><span class="badge-wiki econ">экономика</span></td><td>инфляция, откат БД</td></tr>
+                        <tr><td>2021</td><td>Votekick abuse</td><td><span class="badge-wiki abuse">срыв игры</span></td><td>неиграбельные серверы</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="infobox">
+                    <div class="infobox-header">📋 Обзор</div>
+                    <img class="infobox-image" src="https://cdn.cloudflare.steamstatic.com/steam/apps/440/capsule_616x353.jpg?t=1682943604" alt="Team Fortress 2">
+                    <div class="infobox-row"><span class="label">Игра</span><span class="value">Team Fortress 2</span></div>
+                    <div class="infobox-row"><span class="label">Движок</span><span class="value">Source (Quake legacy)</span></div>
+                    <div class="infobox-row"><span class="label">Период багов</span><span class="value">2007 – н.в.</span></div>
+                    <div class="infobox-row"><span class="label">Самый опасный</span><span class="value">RCE 2015</span></div>
+                    <div class="infobox-row"><span class="label">Самый живучий</span><span class="value">2Fort Wallhack</span></div>
+                    <div class="badge-box">
+                        <span class="badge-wiki legacy">⚙️ легаси-код</span>
+                        <span class="badge-wiki crash" style="margin-left:6px;">⚠️ краши</span>
+                    </div>
+                </div>
+
+                <p><strong>Team Fortress 2</strong> (2007) — культовый многопользовательский шутер. За годы существования в игре накопилось множество багов: от крашей серверов до удалённого выполнения кода и экономических дупликаций. Ниже — хроника самых громких инцидентов.</p>
+
+                <h2 class="anchor" id="section-buffer-overflow">🧨 Эпоха «Таблеток» и краши (2008–2010)</h2>
+                <div class="bug-entry">
+                    <img class="bug-img" src="https://steamuserimages-a.akamaihd.net/ugc/1032791113317645075/49A3E0B2A9F5E9C8D1F4B7C6E5A8D9F0E1C2B3A4/?imw=500&imh=500&ima=fit&impolicy=Letterbox" alt="buffer overflow" onerror="this.style.display='none'">
+                    <h3 style="margin-top:0;">Buffer Overflow &amp; Name Stealer</h3>
+                    <div class="bug-meta"><span>📅 2008–2010</span><span>🏷️ краш сервера</span><span>⚙️ Quake Engine legacy</span></div>
+                    <p>Из-за наследия Quake движок позволял отправлять слишком длинные строки в чат или имя. Это вызывало <strong>переполнение буфера</strong> и мгновенный вылет сервера. Также использовалась «невидимость» имени — сервер не мог обработать коллизию в таблице очков, что приводило к лагу.</p>
+                </div>
+
+                <h2 class="anchor" id="section-rce">☠️ Эпидемия RCE (2015)</h2>
+                <div class="bug-entry">
+                    <img class="bug-img" src="https://steamuserimages-a.akamaihd.net/ugc/1032791113317645075/49A3E0B2A9F5E9C8D1F4B7C6E5A8D9F0E1C2B3A4/?imw=500&imh=500&ima=fit&impolicy=Letterbox" alt="RCE exploit" onerror="this.style.display='none'">
+                    <h3 style="margin-top:0;">Уязвимость в QuickPlay / Workshop</h3>
+                    <div class="bug-meta"><span>📅 2015</span><span>🏷️ Remote Code Execution</span><span>⚠️ критическая</span></div>
+                    <p>Игра загружала пользовательские модели (скины, шляпы) без проверки. Хакеры внедряли в текстуры <strong>shellcode</strong>. Достаточно было войти на заражённый сервер — злоумышленник получал полный доступ к ПК жертвы: кража сессий Steam, майнеры, опустошение инвентаря.</p>
+                    <ul style="margin:6px 0 0 20px; color:#baa48a;">
+                        <li>Valve экстренно отключила загрузку кастомных материалов на месяцы.</li>
+                        <li>Многие модели признаны небезопасными навсегда.</li>
+                    </ul>
+                </div>
+
+                <h2 class="anchor" id="section-crash">💀 Crash-баг 2017 (Divide by Zero)</h2>
+                <div class="bug-entry">
+                    <img class="bug-img" src="https://steamuserimages-a.akamaihd.net/ugc/1032791113317645075/49A3E0B2A9F5E9C8D1F4B7C6E5A8D9F0E1C2B3A4/?imw=500&imh=500&ima=fit&impolicy=Letterbox" alt="particle overflow" onerror="this.style.display='none'">
+                    <h3 style="margin-top:0;">Particle Overflow</h3>
+                    <div class="bug-meta"><span>📅 2017</span><span>🏷️ краш сервера</span><span>⚡ деление на ноль</span></div>
+                    <p>Слишком много эффектов от шапок Подрывника в комбинации с определёнными ботинками вызывали <strong>ошибку деления на ноль</strong> в расчёте траектории гранат. Это загружало одно ядро CPU на 100% — сервер «зависал» и крашился.</p>
+                </div>
+
+                <h2 class="anchor" id="section-duplication">💰 Дыра в экономике: дупликация (2012–2020)</h2>
+                <div class="bug-entry">
+                    <img class="bug-img" src="https://steamuserimages-a.akamaihd.net/ugc/1032791113317645075/49A3E0B2A9F5E9C8D1F4B7C6E5A8D9F0E1C2B3A4/?imw=500&imh=500&ima=fit&impolicy=Letterbox" alt="duplication glitch" onerror="this.style.display='none'">
+                    <h3 style="margin-top:0;">Duplication Glitch (крафт + задержка)</h3>
+                    <div class="bug-meta"><span>📅 2012–2020</span><span>🏷️ экономический эксплойт</span><span>📉 инфляция</span></div>
+                    <p>Игроки использовали задержку между клиентом и сервером при крафте: быстро нажимали «Создать» и отключали интернет-кабель. Сервер получал два подтверждения на одни и те же металлы — так создавались копии <strong>«Австралиумов»</strong> и необычных шапок.</p>
+                    <ul style="margin:6px 0 0 20px; color:#baa48a;">
+                        <li>В 2019 году один клан задвоил более 500 ключей за час.</li>
+                        <li>Valve пришлось откатывать базы данных Steam.</li>
+                    </ul>
+                </div>
+
+                <h2 class="anchor" id="section-bots">🤖 Баг «Зомби-ботов» (Votekick abuse)</h2>
+                <div class="bug-entry">
+                    <img class="bug-img" src="https://steamuserimages-a.akamaihd.net/ugc/1032791113317645075/49A3E0B2A9F5E9C8D1F4B7C6E5A8D9F0E1C2B3A4/?imw=500&imh=500&ima=fit&impolicy=Letterbox" alt="bots" onerror="this.style.display='none'">
+                    <h3 style="margin-top:0;">Спектаторский баг в голосовании</h3>
+                    <div class="bug-meta"><span>📅 2016–2021</span><span>🏷️ эксплуатация логики</span><span>✅ исправлен в 2021</span></div>
+                    <p>Боты использовали баг: если бот находился в спектаторском режиме (мёртв), система кикала не его, а <strong>случайного живого игрока</strong>. Это делало игру неиграбельной на многих серверах. Исправлено патчем 2021 года.</p>
+                </div>
+
+                <h2 class="anchor" id="section-wallhack">🏚️ Самый живучий баг: 2Fort Wallhack</h2>
+                <div class="bug-entry">
+                    <img class="bug-img" src="https://steamuserimages-a.akamaihd.net/ugc/1032791113317645075/49A3E0B2A9F5E9C8D1F4B7C6E5A8D9F0E1C2B3A4/?imw=500&imh=500&ima=fit&impolicy=Letterbox" alt="2fort map" onerror="this.style.display='none'">
+                    <h3 style="margin-top:0;">Стрельба сквозь стены на 2Fort</h3>
+                    <div class="bug-meta"><span>📅 2007 – н.в.</span><span>🏷️ визуальный эксплойт</span><span>🗺️ карта 2Fort</span></div>
+                    <p>Из-за особенностей рендеринга воды и стекла, если Снайпер вставал в определённую точку у моста и приседал, камера проходила сквозь текстуру, показывая всех врагов в подземелье. <strong>Баг живёт с 2007 года</strong> — Valve сочла затраты на перекомпиляцию карты слишком высокими.</p>
+                </div>
+
+                <img class="content-img center" src="https://steamcdn-a.akamaihd.net/steam/apps/440/ss_9c89d25b2f8ca8492b5d72aaff62f4f71f92090d.600x338.jpg?t=1682943604" alt="TF2 gameplay">
+                <div class="img-caption">Геймплей Team Fortress 2 — несмотря на баги, игра остаётся культовой</div>
+
+                <h2>⚙️ Итоги</h2>
+                <p>История багов TF2 — это борьба устаревшего легаси-кода с современными угрозами. Самыми опасными стали <strong>RCE-уязвимости 2015 года</strong>, которые ставили под угрозу безопасность пользователей. Сейчас Valve поддерживает игру минимальными патчами, а сообщество использует сторонние моды (mastercomfig, античиты).</p>
+                <p style="color:#9a896f; font-style:italic;">«Чем дольше живёт игра, тем сложнее править фундамент без полного перезапуска проекта.»</p>
+
+            </div>
+
+            <!-- ===== РЕЖИМ 2: СОВЕТЫ ===== -->
+            <div class="mode-content" id="mode-tips">
+
+                <h1 class="page-title" id="section-tips">🎯 Советы по классам</h1>
+                <div class="page-sub">
+                    <span>письменные гайды для каждого класса</span>
+                    <span class="edit-link">✎ править раздел</span>
+                </div>
+
+                <p>Полезные советы по каждому классу <strong>Team Fortress 2</strong>, которые помогут вам улучшить свою игру.</p>
+
+                <div class="class-grid">
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">🏃</span> Scout (Разведчик)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Используйте двойной прыжок, чтобы запутывать врагов. Держитесь на дистанции и наносите уроны с дробовика. Ваша скорость — главное преимущество.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">🚀</span> Soldier (Солдат)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Освойте прыжки с ракетницей (rocket jumping) — это ключ к мобильности. Стреляйте по ногам врага для максимального урона от взрывной волны.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">🔥</span> Pyro (Поджигатель)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Используйте воздушную струю (Airblast), чтобы отражать ракеты и тушить союзников. Поджигайте врагов и добивайте огнемётом в ближнем бою.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">💣</span> Demoman (Подрывник)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Закладывайте липучки (Stickybombs) в стратегических точках. Учитесь предугадывать движение врага для точных выстрелов из гранатомёта.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">💪</span> Heavy (Пулемётчик)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Держитесь рядом с медиком. Используйте укрытия и не разгоняйте пулемёт без цели — шум выдаёт вашу позицию. Сэндвич может спасти жизнь.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">🔧</span> Engineer (Инженер)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Стройте турель в неожиданных местах. Носить с собой телепорт — всегда хорошая идея для поддержки команды. Не забывайте чинить постройки.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">💉</span> Medic (Медик)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Следите за здоровьем союзников. Ульта (ÜberCharge) переламывает ход боя — используйте её в нужный момент. Не забывайте лечить всех, не только хеви.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">🎯</span> Sniper (Снайпер)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Меняйте позицию после каждого выстрела. Прицеливайтесь в голову — критический урон мгновенно убивает большинство классов. Используйте прицел с умом.</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-header"><span class="emoji">🗡️</span> Spy (Шпион)</div>
+                        <div class="class-desc"><strong>Совет:</strong> Маскируйтесь под врагов и не бегайте прямо на них — это выдаёт. Удар в спину (Backstab) — ваш главный инструмент. Часовой — ваш лучший друг.</div>
+                    </div>
+                </div>
+
+                <div class="guide-button-container">
+                    <a href="https://www.youtube.com/watch?v=Qp3Jjuti8x4&pp=ygUv0YHQvtCy0LXRgtGLINC90LAg0LrQsNC20LTRi9C5INC60LvQsNGB0YEg0YLRhDI%3D" target="_blank" rel="noopener noreferrer" class="guide-button">🎬 Смотреть гайды на MVM и не только</a>
+                </div>
+                <p style="text-align:center; color:#7a6a55; font-size:0.9rem; margin-top:-10px;">📌 Полный видеогайд по MVM на все классы от Ch_lenin 1</p>
+
+            </div>
+
+            <!-- ===== РЕЖИМ 3: КЛИКЕР С БИРЖЕЙ РЕЛЬСОВ ===== -->
+            <div class="mode-content" id="mode-clicker">
+
+                <h1 class="page-title" id="section-clicker">🚂 Кликер: Паровозик</h1>
+                <div class="page-sub">
+                    <span>кликай на паровозик, зарабатывай очки и торгуй рельсами на бирже!</span>
+                    <span class="edit-link">✎ править раздел</span>
+                </div>
+
+                <!-- НОВАЯ ВЁРСТКА: слева — игра, справа — биржа -->
+                <div class="clicker-layout">
+
+                    <!-- === ЛЕВАЯ ЧАСТЬ: КЛИКЕР === -->
+                    <div class="clicker-main">
+                        <div style="text-align: center;">
+                            <div id="train">🚂</div>
+                            <div id="counter">Очков: 0</div>
+                            
+                            <div class="stats-row">
+                                <span>⚡ <span id="clickBonusDisplay">+1</span> за клик</span>
+                                <span>⏱️ <span id="passiveDisplay">+0</span> /сек</span>
+                            </div>
+                            
+                            <div class="sound-control">
+                                <button id="sound-toggle" class="on">🔊 Звук</button>
+                                <span id="sound-status" class="on">ВКЛ</span>
+                            </div>
+
+                            <div class="upgrade-section">
+                                <button id="upgrade">Купить улучшение (2 очка)</button>
+
+                                <div class="shop-container">
+                                    <div class="shop-title">🚆 Магазин паровозиков</div>
+                                    <div class="shop-grid" id="shop-grid">
+                                        <!-- Товары будут добавлены через JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="clicker-stats">
+                                <span id="perClickDisplay">1</span> очко за клик
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- === ПРАВАЯ ЧАСТЬ: БИРЖА РЕЛЬСОВ === -->
+                    <div class="clicker-exchange">
+                        <div class="exchange-title">📈 Биржа рельсов</div>
+                        <div class="exchange-subtitle">Цена одного рельса</div>
+                        <div class="exchange-price" id="railPrice">1000</div>
+                        <div class="exchange-change" id="priceChange">📊 Изменение: +0%</div>
+                        
+                        <canvas id="priceChart"></canvas>
+                        
+                        <div class="exchange-stats">
+                            <span>📊 <span id="railVolume">0</span> рельсов в обороте</span>
+                            <span>💰 <span id="railValue">0</span> очков</span>
+                        </div>
+
+                        <div class="exchange-actions">
+                            <button class="buy-rail" id="buyRail">📥 Купить рельс</button>
+                            <button class="sell-rail" id="sellRail">📤 Продать рельс</button>
+                        </div>
+
+                        <div class="exchange-inventory">
+                            <span>🧩 Рельсов: <span id="railInventory">0</span></span>
+                            <span>💰 Капитал: <span id="totalCapital">0</span></span>
+                        </div>
+                        <div style="text-align:center; font-size:0.7rem; color:#5f5342; margin-top:6px;">
+                            ⚡ Цена обновляется каждые 3 секунды
+                        </div>
+                    </div>
+
+                </div>
+
+                <p style="text-align:center; color:#7a6a55; font-size:0.9rem; margin-top:10px;">
+                    💡 Каждый паровозик даёт свой уникальный бонус!<br>
+                    🚂 При клике раздаётся гудок поезда<br>
+                    📈 Торгуй рельсами на бирже — цена меняется как у биткойна!
+                </p>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="wiki-footer">
+        <span>© 2025 · TF2 Wiki (неофициальная) · материалы основаны на открытых источниках</span>
+        <span><a href="#">Patch Notes</a> · <a href="#">Reddit r/tf2</a> · <a href="#">Steam Support</a></span>
+    </footer>
+
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+        const buttons = document.querySelectorAll('.mode-btn');
+        const contents = {
+            bugs: document.getElementById('mode-bugs'),
+            tips: document.getElementById('mode-tips'),
+            clicker: document.getElementById('mode-clicker')
+        };
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                buttons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                Object.values(contents).forEach(el => el.classList.remove('active'));
+                const mode = this.dataset.mode;
+                if (contents[mode]) contents[mode].classList.add('active');
+                // Перерисовываем график при переключении на кликер
+                if (mode === 'clicker') {
+                    setTimeout(drawChart, 50);
+                }
+            });
+        });
+
+        // --- ЛОГИКА КЛИКЕРА ---
+        let points = 0;
+        let baseClickPower = 1;
+        let upgradeCost = 2;
+        let soundEnabled = true;
+        let currentTrainId = 'train1';
+        let passiveIncome = 0;
+        let passiveInterval = null;
+
+        // --- БИРЖА РЕЛЬСОВ ---
+        let railPrice = 1000;
+        let railInventory = 0;
+        let priceHistory = [1000];
+        let priceChange = 0;
+
+        // Бонусы паровозиков (стоимость увеличена)
+        const trainBonuses = {
+            'train1': { clickBonus: 0, passiveBonus: 0, name: 'Классический' },
+            'train2': { clickBonus: 2, passiveBonus: 0, name: 'Скоростной' },
+            'train3': { clickBonus: 4, passiveBonus: 0, name: 'Синкансэн' },
+            'train4': { clickBonus: 0, passiveBonus: 2, name: 'Электричка' },
+            'train5': { clickBonus: 6, passiveBonus: 0, name: 'Метро' },
+            'train6': { clickBonus: 0, passiveBonus: 4, name: 'Вокзал' },
+            'train7': { clickBonus: 3, passiveBonus: 2, name: 'Трамвай' },
+            'train8': { clickBonus: 0, passiveBonus: 8, name: 'Монорельс' },
+        };
+
+        // Доступные паровозики (стоимость увеличена!)
+        const trains = [
+            { id: 'train1', emoji: '🚂', name: 'Классический', price: 0, default: true },
+            { id: 'train2', emoji: '🚄', name: 'Скоростной', price: 200 },
+            { id: 'train3', emoji: '🚅', name: 'Синкансэн', price: 500 },
+            { id: 'train4', emoji: '🚆', name: 'Электричка', price: 800 },
+            { id: 'train5', emoji: '🚇', name: 'Метро', price: 1500 },
+            { id: 'train6', emoji: '🚉', name: 'Вокзал', price: 2500 },
+            { id: 'train7', emoji: '🚊', name: 'Трамвай', price: 4000 },
+            { id: 'train8', emoji: '🚝', name: 'Монорельс', price: 6500 },
+        ];
+
+        let ownedTrains = ['train1'];
+
+        // DOM-элементы кликера
+        const trainEl = document.getElementById('train');
+        const counterEl = document.getElementById('counter');
+        const upgradeBtn = document.getElementById('upgrade');
+        const perClickDisplay = document.getElementById('perClickDisplay');
+        const clickBonusDisplay = document.getElementById('clickBonusDisplay');
+        const passiveDisplay = document.getElementById('passiveDisplay');
+        const soundToggle = document.getElementById('sound-toggle');
+        const soundStatus = document.getElementById('sound-status');
+        const shopGrid = document.getElementById('shop-grid');
+
+        // DOM-элементы биржи
+        const railPriceEl = document.getElementById('railPrice');
+        const railInventoryEl = document.getElementById('railInventory');
+        const railValueEl = document.getElementById('railValue');
+        const totalCapitalEl = document.getElementById('totalCapital');
+        const railVolumeEl = document.getElementById('railVolume');
+        const priceChangeEl = document.getElementById('priceChange');
+        const buyRailBtn = document.getElementById('buyRail');
+        const sellRailBtn = document.getElementById('sellRail');
+        const chartCanvas = document.getElementById('priceChart');
+        const ctx = chartCanvas.getContext('2d');
+
+        // --- ЗВУК ---
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) { /* тихо */ }
+            }
+            return audioCtx;
+        }
+
+        function playTrainHorn() {
+            if (!soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            try {
+                if (ctx.state === 'suspended') ctx.resume();
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(110, now);
+                osc1.frequency.exponentialRampToValueAtTime(90, now + 0.3);
+                gain1.gain.setValueAtTime(0.15, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(165, now);
+                osc2.frequency.exponentialRampToValueAtTime(130, now + 0.3);
+                gain2.gain.setValueAtTime(0.08, now);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                const osc3 = ctx.createOscillator();
+                const gain3 = ctx.createGain();
+                osc3.type = 'sine';
+                osc3.frequency.setValueAtTime(55, now);
+                osc3.frequency.exponentialRampToValueAtTime(45, now + 0.4);
+                gain3.gain.setValueAtTime(0.12, now);
+                gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc3.connect(gain3);
+                gain3.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.6);
+                osc2.start(now + 0.05);
+                osc2.stop(now + 0.55);
+                osc3.start(now + 0.1);
+                osc3.stop(now + 0.7);
+            } catch (e) { /* тихо */ }
+        }
+
+        // --- ПАССИВНЫЙ ДОХОД ---
+        function updatePassiveIncome() {
+            const bonus = trainBonuses[currentTrainId] || { passiveBonus: 0 };
+            passiveIncome = bonus.passiveBonus;
+            passiveDisplay.textContent = `+${passiveIncome}`;
+            if (passiveInterval) { clearInterval(passiveInterval); passiveInterval = null; }
+            if (passiveIncome > 0) {
+                passiveInterval = setInterval(() => {
+                    points += passiveIncome;
+                    counterEl.textContent = `Очков: ${points}`;
+                    updateExchangeStats();
+                    renderShop();
+                }, 1000);
+            }
+        }
+
+        function getTotalClickPower() {
+            const bonus = trainBonuses[currentTrainId] || { clickBonus: 0 };
+            return baseClickPower + bonus.clickBonus;
+        }
+
+        function updateStats() {
+            const total = getTotalClickPower();
+            perClickDisplay.textContent = total;
+            clickBonusDisplay.textContent = `+${total}`;
+        }
+
+        // --- БИРЖА ---
+        function updateExchangeStats() {
+            const totalValue = railInventory * railPrice;
+            const capital = points + totalValue;
+            railInventoryEl.textContent = railInventory;
+            railValueEl.textContent = totalValue;
+            totalCapitalEl.textContent = capital;
+            railVolumeEl.textContent = priceHistory.length;
+        }
+
+        function updatePrice() {
+            const oldPrice = railPrice;
+            // Рандомное изменение как у биткойна: от -15% до +18%
+            const changePercent = (Math.random() * 33 - 15) / 100;
+            const newPrice = Math.max(50, Math.round(railPrice * (1 + changePercent)));
+            railPrice = newPrice;
+            priceChange = ((railPrice - oldPrice) / oldPrice * 100);
+            
+            railPriceEl.textContent = railPrice;
+            railPriceEl.className = 'exchange-price' + (priceChange >= 0 ? '' : ' down');
+            priceChangeEl.textContent = `📊 Изменение: ${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%`;
+            priceChangeEl.className = 'exchange-change' + (priceChange >= 0 ? ' up' : ' down');
+            
+            priceHistory.push(railPrice);
+            if (priceHistory.length > 30) priceHistory.shift();
+            
+            updateExchangeStats();
+            drawChart();
+        }
+
+        // --- ГРАФИК ---
+        function drawChart() {
+            const canvas = chartCanvas;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const width = canvas.parentElement.clientWidth - 4;
+            const height = 100;
+            canvas.width = width;
+            canvas.height = height;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#0f0d0a';
+            ctx.fillRect(0, 0, width, height);
+            
+            if (priceHistory.length < 2) {
+                ctx.fillStyle = '#5f5342';
+                ctx.font = '12px Roboto Condensed';
+                ctx.textAlign = 'center';
+                ctx.fillText('Ожидание данных...', width/2, height/2 + 4);
+                return;
+            }
+            
+            const min = Math.min(...priceHistory);
+            const max = Math.max(...priceHistory);
+            const range = max - min || 1;
+            const padding = 4;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = '#8fca8f';
+            ctx.lineWidth = 2;
+            
+            for (let i = 0; i < priceHistory.length; i++) {
+                const x = padding + (i / (priceHistory.length - 1)) * (width - padding * 2);
+                const y = padding + (1 - (priceHistory[i] - min) / range) * (height - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Последняя точка
+            if (priceHistory.length > 0) {
+                const last = priceHistory.length - 1;
+                const x = padding + (last / (priceHistory.length - 1)) * (width - padding * 2);
+                const y = padding + (1 - (priceHistory[last] - min) / range) * (height - padding * 2);
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#f0d6a8';
+                ctx.fill();
+            }
+        }
+
+        // --- РЕНДЕР МАГАЗИНА ---
+        function renderShop() {
+            shopGrid.innerHTML = '';
+            trains.forEach(train => {
+                const isOwned = ownedTrains.includes(train.id);
+                const isActive = currentTrainId === train.id;
+                const canAfford = points >= train.price && !isOwned;
+                const isDefault = train.default || false;
+                const bonus = trainBonuses[train.id] || { clickBonus: 0, passiveBonus: 0 };
+                
+                let bonusText = '';
+                if (bonus.clickBonus > 0 && bonus.passiveBonus > 0) {
+                    bonusText = `⚡+${bonus.clickBonus} | ⏱️+${bonus.passiveBonus}`;
+                } else if (bonus.clickBonus > 0) {
+                    bonusText = `⚡+${bonus.clickBonus} за клик`;
+                } else if (bonus.passiveBonus > 0) {
+                    bonusText = `⏱️+${bonus.passiveBonus}/сек`;
+                } else {
+                    bonusText = 'Без бонуса';
+                }
+
+                const item = document.createElement('div');
+                item.className = `shop-item ${isOwned ? 'owned' : ''} ${!isOwned && !canAfford && !isDefault ? 'locked' : ''}`;
+
+                let statusText = '';
+                if (isOwned && isActive) statusText = '✅ ИСПОЛЬЗУЕТСЯ';
+                else if (isOwned) statusText = '✅ ВЛАДЕЛЕЦ';
+                else statusText = `💰 ${train.price} очков`;
+
+                item.innerHTML = `
+                    <span class="train-emoji">${train.emoji}</span>
+                    <div class="train-name">${train.name}</div>
+                    <div class="train-bonus">${bonusText}</div>
+                    <div class="train-price">${isDefault ? 'Бесплатно' : `${train.price} очков`}</div>
+                    <div class="train-status">${statusText}</div>
+                    ${!isDefault ? `<button class="buy-btn" ${!canAfford && !isOwned ? 'disabled' : ''} data-id="${train.id}">${isOwned ? (isActive ? 'Используется' : 'Использовать') : 'Купить'}</button>` : ''}
+                    ${!isDefault && (bonus.clickBonus > 0 || bonus.passiveBonus > 0) ? `<div class="bonus-tag">${bonus.clickBonus > 0 && bonus.passiveBonus > 0 ? '⚡+⏱️' : bonus.clickBonus > 0 ? '⚡' : '⏱️'}</div>` : ''}
+                `;
+
+                if (!isDefault) {
+                    const btn = item.querySelector('.buy-btn');
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        const trainData = trains.find(t => t.id === id);
+
+                        if (ownedTrains.includes(id)) {
+                            currentTrainId = id;
+                            trainEl.textContent = trainData.emoji;
+                            updatePassiveIncome();
+                            updateStats();
+                            renderShop();
+                        } else if (points >= trainData.price) {
+                            points -= trainData.price;
+                            ownedTrains.push(id);
+                            currentTrainId = id;
+                            trainEl.textContent = trainData.emoji;
+                            counterEl.textContent = `Очков: ${points}`;
+                            updatePassiveIncome();
+                            updateStats();
+                            updateExchangeStats();
+                            renderShop();
+                        }
+                    });
+                } else {
+                    item.addEventListener('click', function() {
+                        if (!ownedTrains.includes('train1')) ownedTrains.push('train1');
+                        currentTrainId = 'train1';
+                        trainEl.textContent = '🚂';
+                        updatePassiveIncome();
+                        updateStats();
+                        renderShop();
+                    });
+                }
+                shopGrid.appendChild(item);
+            });
+        }
+
+        // --- ОБРАБОТЧИКИ СОБЫТИЙ ---
+        trainEl.addEventListener('click', function() {
+            const clickPower = getTotalClickPower();
+            points += clickPower;
+            counterEl.textContent = `Очков: ${points}`;
+            playTrainHorn();
+            updateStats();
+            updateExchangeStats();
+            renderShop();
+        });
+
+        upgradeBtn.addEventListener('click', function() {
+            if (points >= upgradeCost) {
+                points -= upgradeCost;
+                baseClickPower += 1;
+                upgradeCost *= 2;
+                counterEl.textContent = `Очков: ${points}`;
+                upgradeBtn.textContent = `Купить улучшение (${upgradeCost} очков)`;
+                updateStats();
+                updateExchangeStats();
+                renderShop();
+            }
+        });
+
+        // --- БИРЖА: КУПИТЬ/ПРОДАТЬ ---
+        buyRailBtn.addEventListener('click', function() {
+            if (points >= railPrice) {
+                points -= railPrice;
+                railInventory += 1;
+                counterEl.textContent = `Очков: ${points}`;
+                updateExchangeStats();
+                renderShop();
+                playTrainHorn(); // звук для эффекта
+            }
+        });
+
+        sellRailBtn.addEventListener('click', function() {
+            if (railInventory > 0) {
+                railInventory -= 1;
+                points += railPrice;
+                counterEl.textContent = `Очков: ${points}`;
+                updateExchangeStats();
+                renderShop();
+                playTrainHorn();
+            }
+        });
+
+        // --- ЗВУК ---
+        soundToggle.addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                soundToggle.classList.add('on');
+                soundToggle.textContent = '🔊 Звук';
+                soundStatus.classList.remove('off');
+                soundStatus.classList.add('on');
+                soundStatus.textContent = 'ВКЛ';
+                const ctx = getAudioContext();
+                if (ctx && ctx.state === 'suspended') ctx.resume();
+            } else {
+                soundToggle.classList.remove('on');
+                soundToggle.textContent = '🔇 Звук';
+                soundStatus.classList.remove('on');
+                soundStatus.classList.add('off');
+                soundStatus.textContent = 'ВЫКЛ';
+                if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+            }
+        });
+
+        // --- АКТИВНАЯ ССЫЛКА В САЙДБАРЕ ---
+        const sections = document.querySelectorAll('.anchor');
+        const navLinks = document.querySelectorAll('.wiki-sidebar ul li a');
+
+        function updateActiveLink() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveLink);
+        window.addEventListener('load', updateActiveLink);
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        updatePassiveIncome();
+        updateStats();
+        updateExchangeStats();
+        renderShop();
+        updatePrice();
+        
+        // Обновление цены каждые 3 секунды
+        setInterval(updatePrice, 3000);
+        
+        // Перерисовка графика при изменении размера окна
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(drawChart, 100);
+        });
+    });
+</script>
+
+</body>
+</html>
